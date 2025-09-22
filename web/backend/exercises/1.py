@@ -3,8 +3,9 @@
         В этом задании не понадобится текст - надо просто расставить все буквы русского алфавита в правильном порядке.
 """
 
-from web.backend.data.alphabet import rus
 from random import shuffle
+
+from web.backend.data.alphabet import rus
 
 
 def one(alphabet, chunksize=1):

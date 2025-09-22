@@ -6,6 +6,7 @@
 # TODO: можно сделать логичнее
 # TODO: переписать сортировку
 from random import shuffle
+
 from web.backend.data.alphabet import rus
 from web.backend.data.test_text import test_text
 from web.backend.helpers.preprocessing import split_passes
