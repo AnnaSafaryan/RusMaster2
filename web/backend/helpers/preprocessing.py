@@ -1,12 +1,17 @@
-import locale
+# import spacy
+import ru_core_news_sm
 
-locale.setlocale(locale.LC_ALL, "ru_RU.UTF-8")
-
-
-def true_sort(sequence, reverse=False):
-    # return sorted(sequence, key=locale.strxfrm, reverse=reverse) # только для строк
-    pass
+nlp = ru_core_news_sm.load()
 
 
-def split_passes(text):
-    return [pas.strip() for pas in text.strip().split("\n")]
+def preprocess(text):
+    doc = nlp(text)
+
+    for sent in doc.sents:
+        print(sent)
+
+
+if __name__ == "__main__":
+    from web.backend.data.test_text import test_text
+
+    preprocess(text=test_text)

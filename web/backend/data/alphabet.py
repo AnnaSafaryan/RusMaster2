@@ -1,4 +1,4 @@
-rus = "абвгдеёжзиклмнопрстуфхцчшщъыьэюя"
+rus = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
 eng = "abcdefghijklmnopqrstuvwxyz"
 
 order_rus = {let: i for i, let in enumerate(rus)}
