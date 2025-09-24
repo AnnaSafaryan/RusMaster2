@@ -1,7 +1,7 @@
 import hashlib
 import locale
 from os import makedirs
-from random import shuffle as rnd_shuffle
+from random import shuffle
 
 locale.setlocale(locale.LC_ALL, "ru_RU.UTF-8")
 
@@ -10,12 +10,12 @@ def split_paragraphs(text):
     return [paragraph.strip() for paragraph in text.strip().split("\n")]
 
 
-def shuffle(elements):
+def shuffle_recursive(elements):
     shuffled = elements.copy()
-    rnd_shuffle(shuffled)
+    shuffle(shuffled)
 
     while shuffled == elements:  # защита от случайного повторения исходного порядка
-        shuffled, elements = shuffle(elements)
+        shuffled, elements = shuffle_recursive(elements)
 
     return shuffled, elements
 
@@ -85,10 +85,6 @@ def generate_id(file_path, data="content"):
     else:
         raise ValueError
     return h.hexdigest()
-
-
-def resolve_paths():
-    pass
 
 
 def create_path(path):

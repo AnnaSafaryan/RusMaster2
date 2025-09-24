@@ -1,8 +1,11 @@
 from itertools import chain
 
+import ru_core_news_sm
 import spacy
 
-from web.backend.helpers.difficulty import lexmins
+from web.backend.helpers.difficulty import level_sent, lexmins
+from web.backend.helpers.loaders import pickle_dump, pickle_load
+from web.backend.helpers.utils import read_file
 
 # TODO: добавлять и переопределять в оригинальных классах, а не писать новые
 
@@ -23,7 +26,7 @@ class Token:
         self.is_title = token.is_title  # начинается ли с заглавной
         self.is_punct = token.is_punct  # знак препинания
         self.idx_text = token.i  # номер в тексте
-        # TODO: предлоги и местоимения -- тоже по лекс минимумам?
+        # TODO: предлоги и местоимения -- тоже по лекс минимумам, оставить?
         self.is_meaningful = True if self.is_alpha and not self.is_stop else False
         self.levels = [
             level
@@ -45,7 +48,7 @@ class Sentence:
         self.text = sentence.text
         self.tokens = [Token(token) for token in list(self.original)]
         self.meaningful_list = [token for token in self.tokens if token.is_meaningful]
-        self.difficulty = 0  # TODO
+        self.difficulty = level_sent(self)
         self.idx_text = 0  # TODO
         del self.original
 
@@ -80,16 +83,28 @@ def preprocess(text, spacy_model):
     return Document(document=doc)
 
 
-if __name__ == "__main__":
-    import ru_core_news_sm
+def get_preprocessed(path, forced=False, spacy_model=None):
+    if path.exists() and not forced:
+        print(f"Loadig {path}")
+        with path.open("rb") as file:
+            preprocessed = pickle_load(file)
+    else:
+        print(f"Processing {path}")
+        text = read_file(path)
+        nlp_model = ru_core_news_sm.load()  # TODO: модель на выбор
+        preprocessed = preprocess(text=text, spacy_model=nlp_model)
+        pickle_dump(preprocessed, path)
+    return preprocessed
 
-    from web.backend.data.test_text import text
+
+if __name__ == "__main__":
+    from web.backend.data.test_text import raw_text
 
     nlp = ru_core_news_sm.load()
-    preprocessed = nlp(text)
+    preprocessed = nlp(raw_text)
     # print(type(preprocessed))
     # print(list(preprocessed.tokens))
-    preprocessed = Document(preprocessed, spacy_model=nlp)
+    preprocessed = Document(preprocessed)
     # print(preprocessed)
     # print(list(preprocessed))
     # print(Token(preprocessed[7]).__repr__())

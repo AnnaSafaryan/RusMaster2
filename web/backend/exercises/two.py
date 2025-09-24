@@ -4,19 +4,18 @@
     и необходимо восстановить логический порядок абзацев.
 """
 
-from web.backend.data.alphabet import rus
-from web.backend.helpers.utils import shuffle, sort_order, split_paragraphs
+from web.backend.helpers.utils import shuffle_recursive, sort_order, split_paragraphs
 
 
-def main(text, alphabet):
-    paragraphs = split_paragraphs(text)
+def main(raw_text, alphabet):
+    paragraphs = split_paragraphs(raw_text)
     assert len(paragraphs) >= 3
 
     letters = list(alphabet.upper()[: len(paragraphs)])
-    key_letters, _ = shuffle(letters)
-    task_letters, _ = shuffle(letters)
+    key_letters, _ = shuffle_recursive(letters)
+    task_letters, _ = shuffle_recursive(letters)
     while key_letters == task_letters:
-        task_letters, _ = shuffle(letters)
+        task_letters, _ = shuffle_recursive(letters)
 
     let2pas = {i: pas for i, pas in zip(key_letters, paragraphs)}
 
@@ -27,6 +26,10 @@ def main(text, alphabet):
 
 
 if __name__ == "__main__":
-    from web.backend.data.test_text import text
+    from web.backend.config import config
+    from web.backend.data.test_text import raw_text
+    from web.backend.helpers.loaders import json_load
 
-    print(main(text=text, alphabet=rus))
+    alphabets = json_load(config.ALPHABET_DICT)
+    task, keys = main(raw_text=raw_text, alphabet=alphabets["rus"])
+    print(task, keys, sep=f"\n{'-'*30}\n")
