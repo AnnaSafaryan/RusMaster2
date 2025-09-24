@@ -12,6 +12,12 @@ class PipelineSettings(BaseSettings):
     DATA_DIR: Path = ROOT_DIR / "data"
     WEB_DIR: Path = ROOT_DIR / "web"
     BACKEND_DIR: Path = WEB_DIR / "backend"
+    TEMP_DIR: Path = BACKEND_DIR / "temp"
+
+    # Default
+    TEST_TEXT_PATH: Path = DATA_DIR / "texts" / "test_text_2.txt"
+
+    # Linguistics
 
     class Config:
         env_file = ROOT_DIR / ".env"

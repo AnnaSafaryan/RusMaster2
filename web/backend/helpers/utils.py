@@ -1,11 +1,13 @@
+import hashlib
 import locale
+from os import makedirs
 from random import shuffle as rnd_shuffle
 
 locale.setlocale(locale.LC_ALL, "ru_RU.UTF-8")
 
 
-def split_passes(text):
-    return [pas.strip() for pas in text.strip().split("\n")]
+def split_paragraphs(text):
+    return [paragraph.strip() for paragraph in text.strip().split("\n")]
 
 
 def shuffle(elements):
@@ -26,7 +28,7 @@ def sort_alphabetic(sequence, reverse=False):
         sequence,
         key=locale.strxfrm,
         reverse=reverse,
-    )  # только для строк
+    )  # TODO: пока только для строк
 
 
 def sort_order(sequence, order):
@@ -55,15 +57,46 @@ def convert_encoding(file, encoding="utf-8"):
 
 
 def read_file(file):
+    """
+    Читает из файла, преобразует кодировку,
+    убирает двойные пробелы и ручные переносы
+    """
     try:
         with open(file, encoding="utf-8") as f:
-            data = f.read().strip()
+            text = f.read().strip()
+            while "  " in text:
+                text = text.replace("  ", " ")
+            text = text.replace("-\n", "")
     except UnicodeError:
         convert_encoding(file)
-        data = read_file(file)
+        text = read_file(file)
 
-    return data
+    return text
+
+
+def generate_id(file_path, data="content"):
+    """
+    Хэш по содержимому файла (по умолчанию) или пути к нему
+    """
+    if data == "content":
+        h = hashlib.md5(file_path.read_bytes())
+    elif data == "path":
+        h = hashlib.md5(str(file_path).encode("utf-8"))
+    else:
+        raise ValueError
+    return h.hexdigest()
 
 
 def resolve_paths():
     pass
+
+
+def create_path(path):
+    """
+    Создаёт указанную директорию
+    """
+    if path.exists():
+        print(f"{path} exists.")
+    else:
+        makedirs(path)
+        print(f"{path} created.")

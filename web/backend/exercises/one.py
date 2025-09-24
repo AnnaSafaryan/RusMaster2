@@ -10,7 +10,7 @@ from web.backend.data.alphabet import rus
 from web.backend.helpers.utils import shuffle, sort_alphabetic
 
 
-def main(alphabet, n_chunks, chunksize=1):
+def main(alphabet, n_chunks, chunksize):
     assert n_chunks * chunksize < len(alphabet)
 
     alphabet = alphabet.upper()
